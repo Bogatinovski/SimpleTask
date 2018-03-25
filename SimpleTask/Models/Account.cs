@@ -3,7 +3,10 @@ using System.Collections.Generic;
 
 namespace SimpleTask.Models
 {
-    public partial class Account
+    /// <summary>
+    /// The Account entity represents holds data for the virtual Account on the platform
+    /// </summary>
+    public class Account
     {
         public Account()
         {

@@ -3,7 +3,10 @@ using System.Collections.Generic;
 
 namespace SimpleTask.Models
 {
-    public partial class Location
+    /// <summary>
+    /// The Location entity represents a physical location that belongs to a single Account and can have multiple Classrooms
+    /// </summary>
+    public class Location
     {
         public Location()
         {
