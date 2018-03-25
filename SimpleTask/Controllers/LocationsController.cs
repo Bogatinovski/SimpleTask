@@ -61,6 +61,21 @@ namespace SimpleTask.Controllers
             return Ok(classrooms);
         }
 
+        // POST: api/Locations/5/Classrooms
+        [HttpPost("{id}/Classrooms")]
+        public async Task<IActionResult> PostLocationClassroom([FromRoute] int id, [FromBody] Classroom classroom)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _context.Classrooms.Add(classroom);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetLocation", new { id = classroom.LocationId }, classroom);
+        }
+
         // PUT: api/Locations/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutLocation([FromRoute] int id, [FromBody] Location location)
