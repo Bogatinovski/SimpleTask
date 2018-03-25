@@ -22,9 +22,10 @@ namespace SimpleTask.Controllers
 
         // GET: api/Locations
         [HttpGet]
-        public IEnumerable<Location> GetLocations()
+        public async Task<IActionResult> GetLocations()
         {
-            return _context.Locations;
+            IEnumerable<Location> locations = await _context.Locations.Include(l => l.Classrooms).ToListAsync();
+            return Ok(locations);
         }
 
         // GET: api/Locations/5
@@ -44,6 +45,20 @@ namespace SimpleTask.Controllers
             }
 
             return Ok(location);
+        }
+
+        // GET: api/Locations/5/Classrooms
+        [HttpGet("{id}/Classrooms")]
+        public async Task<IActionResult> GetLocationClassrooms([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            IEnumerable<Classroom> classrooms = await _context.Classrooms.Where(c => c.LocationId == id).ToListAsync();
+
+            return Ok(classrooms);
         }
 
         // PUT: api/Locations/5
