@@ -4,10 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SimpleTask.Models;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace SimpleTask
@@ -30,6 +32,8 @@ namespace SimpleTask
             {
                 c.SwaggerDoc("v1", new Info { Title = "Simple Task API", Version = "v1" });
             });
+
+            services.AddDbContext<C3Context>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
