@@ -35,6 +35,13 @@ namespace SimpleTask
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                     options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
                     options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+
+                    if (options.SerializerSettings.ContractResolver != null)
+                    {
+                        var castedResolver = options.SerializerSettings.ContractResolver
+                            as DefaultContractResolver;
+                        castedResolver.NamingStrategy = null;
+                    }
                 });
 
             services.AddSwaggerGen(c =>
