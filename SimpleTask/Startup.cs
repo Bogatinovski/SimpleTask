@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -30,7 +31,15 @@ namespace SimpleTask
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "Simple Task API", Version = "v1" });
+                c.SwaggerDoc("v1", new Info
+                {
+                    Title = "Simple Task API",
+                    Version = "v1"
+                });
+
+                var basePath = AppContext.BaseDirectory;
+                var xmlPath = Path.Combine(basePath, "SimpleTask.xml");
+                c.IncludeXmlComments(xmlPath);
             });
 
             services.AddDbContext<C3Context>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
