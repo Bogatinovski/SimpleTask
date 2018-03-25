@@ -21,6 +21,10 @@ namespace SimpleTask.Controllers
         }
 
         // GET: api/Locations
+        /// <summary>
+        /// Get a list of all locations
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetLocations()
         {
@@ -29,6 +33,11 @@ namespace SimpleTask.Controllers
         }
 
         // GET: api/Locations/5
+        /// <summary>
+        /// Get a single location by id
+        /// </summary>
+        /// <param name="id">The id of the location</param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetLocation([FromRoute] int id)
         {
@@ -48,6 +57,11 @@ namespace SimpleTask.Controllers
         }
 
         // GET: api/Locations/5/Classrooms
+        /// <summary>
+        /// Get a list of Classroom objects for a given Location
+        /// </summary>
+        /// <param name="id">The id of the location</param>
+        /// <returns></returns>
         [HttpGet("{id}/Classrooms")]
         public async Task<IActionResult> GetLocationClassrooms([FromRoute] int id)
         {
@@ -62,6 +76,12 @@ namespace SimpleTask.Controllers
         }
 
         // POST: api/Locations/5/Classrooms
+        /// <summary>
+        /// Add Classroom to a Location
+        /// </summary>
+        /// <param name="id">The id of the location for which a classroom will be added</param>
+        /// <param name="classroom">The Classroom entity</param>
+        /// <returns></returns>
         [HttpPost("{id}/Classrooms")]
         public async Task<IActionResult> PostLocationClassroom([FromRoute] int id, [FromBody] Classroom classroom)
         {
@@ -77,6 +97,12 @@ namespace SimpleTask.Controllers
         }
 
         // PUT: api/Locations/5
+        /// <summary>
+        /// Update a Location
+        /// </summary>
+        /// <param name="id">The id of the Location</param>
+        /// <param name="location">The Location entity</param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutLocation([FromRoute] int id, [FromBody] Location location)
         {
@@ -112,6 +138,11 @@ namespace SimpleTask.Controllers
         }
 
         // POST: api/Locations
+        /// <summary>
+        /// Create a Location
+        /// </summary>
+        /// <param name="location">The Location entity</param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> PostLocation([FromBody] Location location)
         {
@@ -127,6 +158,11 @@ namespace SimpleTask.Controllers
         }
 
         // DELETE: api/Locations/5
+        /// <summary>
+        /// Delete a Location by id
+        /// </summary>
+        /// <param name="id">The id of the location</param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLocation([FromRoute] int id)
         {
