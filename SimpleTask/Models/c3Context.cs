@@ -27,7 +27,7 @@ namespace SimpleTask.Models
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
 
-                entity.Property(e => e.Guid).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.Guid).HasDefaultValueSql("(newid())").IsRequired();
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -48,7 +48,7 @@ namespace SimpleTask.Models
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
 
-                entity.Property(e => e.Capacity).HasDefaultValueSql("((99))");
+                entity.Property(e => e.Capacity).HasDefaultValueSql("((99))").IsRequired();
 
                 entity.Property(e => e.LocationId).HasColumnName("LocationID");
 
@@ -66,7 +66,7 @@ namespace SimpleTask.Models
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
 
-                entity.Property(e => e.AccountId).HasColumnName("AccountID");
+                entity.Property(e => e.AccountId).HasColumnName("AccountID").IsRequired();
 
                 entity.Property(e => e.Address1).HasMaxLength(100);
 
@@ -77,6 +77,7 @@ namespace SimpleTask.Models
                 entity.Property(e => e.CountryCode).HasColumnType("char(2)");
 
                 entity.Property(e => e.IsActive)
+                    .IsRequired()
                     .HasColumnName("isActive")
                     .HasDefaultValueSql("((1))");
 
