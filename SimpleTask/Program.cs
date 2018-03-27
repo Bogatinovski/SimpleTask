@@ -20,6 +20,7 @@ namespace SimpleTask
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
+                .UseUrls("http://*:5555")
                 .Build();
     }
 }

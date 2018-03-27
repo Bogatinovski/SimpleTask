@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityServer4.AccessTokenValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -13,7 +15,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using SimpleTask.AppSettings;
 using SimpleTask.Data;
+using SimpleTask.Helpers;
 using SimpleTask.Models;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -21,12 +25,15 @@ namespace SimpleTask
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public IConfiguration Configuration { get; }
+        public IHostingEnvironment Environment { get; }
+
+
+        public Startup(IConfiguration configuration, IHostingEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
         }
-
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -34,6 +41,11 @@ namespace SimpleTask
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            services.AddOptions();
+
+            var identityServerSettings = Configuration.GetSection("IdentityServerSettings");
+            services.Configure<IdentityServerSettings>(identityServerSettings);
 
             services.Configure<IdentityOptions>(options =>
             {
@@ -43,7 +55,6 @@ namespace SimpleTask
                 options.Password.RequireNonAlphanumeric = false;
                 options.User.RequireUniqueEmail = true;
             });
-
 
             services.AddMvc()
                 .AddJsonOptions(options =>
@@ -59,6 +70,28 @@ namespace SimpleTask
                         castedResolver.NamingStrategy = null;
                     }
                 });
+
+            var builder = services.AddIdentityServer(options =>
+            {
+                options.Events.RaiseErrorEvents = true;
+                options.Events.RaiseInformationEvents = true;
+                options.Events.RaiseFailureEvents = true;
+                options.Events.RaiseSuccessEvents = true;
+            });
+
+            builder.AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
+               .AddInMemoryApiResources(IdentityServerConfig.GetApiResources())
+               .AddInMemoryClients(IdentityServerConfig.GetClients())
+               .AddAspNetIdentity<ApplicationUser>();
+
+            if (Environment.IsDevelopment())
+            {
+                builder.AddDeveloperSigningCredential();
+            }
+            else
+            {
+                throw new Exception("need to configure key material");
+            }
 
             services.AddSwaggerGen(c =>
             {
@@ -77,23 +110,33 @@ namespace SimpleTask
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+
+            services.AddAuthorization();
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.Authority = identityServerSettings.Get<IdentityServerSettings>().AuthorityEndpoint;
+                    options.RequireHttpsMetadata = false;
+                    options.ApiName = "api1";
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseAuthentication();
             app.UseSwagger();
-
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Simple Task API V1");
             });
-
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
+            app.UseStaticFiles();
+            app.UseIdentityServer();
             app.UseMvc();
         }
     }

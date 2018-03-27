@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
+using IdentityModel.Client;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using SimpleTask.AppSettings;
 using SimpleTask.Data;
 using SimpleTask.Helpers;
 using SimpleTask.Models;
@@ -18,16 +22,19 @@ namespace SimpleTask.Controllers
     {
         private readonly ApplicationDbContext appDbContext;
         private readonly UserManager<ApplicationUser> userManager;
+        private IdentityServerSettings identityServerSettings;
 
-        public AccountsController(UserManager<ApplicationUser> userManager, ApplicationDbContext appDbContext)
+        public AccountsController(UserManager<ApplicationUser> userManager, ApplicationDbContext appDbContext, IOptions<IdentityServerSettings> identityServerSettings)
         {
             this.userManager = userManager;
             this.appDbContext = appDbContext;
+            this.identityServerSettings = identityServerSettings.Value;
         }
 
-        // POST api/accounts
+        // POST api/Accounts/Register
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]RegisterViewModel model)
+        [Route("Register")]
+        public async Task<IActionResult> Register([FromBody]RegisterViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -47,10 +54,30 @@ namespace SimpleTask.Controllers
                 return BadRequest(Errors.AddErrorsToModelState(result, ModelState));
             }
 
-            //await appDbContext.Customers.AddAsync(new Customer { IdentityId = userIdentity.Id, Location = model.Location });
-            //await appDbContext.SaveChangesAsync();
+            return Ok(userIdentity);
+        }
 
-            return Ok();
+        // POST api/Accounts/Login
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody]LoginViewModel credentials)
+        {
+            var disco = await DiscoveryClient.GetAsync(identityServerSettings.AuthorityEndpoint);
+
+            if(disco.IsError)
+            {
+                return BadRequest(Errors.AddErrorToModelState("login_failure", "Invalid username of password", ModelState));
+            }
+
+            var tokenClient = new TokenClient(disco.TokenEndpoint, "ro.client", "secret");
+            var tokenResponse = await tokenClient.RequestResourceOwnerPasswordAsync(credentials.Email, credentials.Password, "api1");
+
+            if (tokenResponse.IsError)
+            {
+                return BadRequest(Errors.AddErrorToModelState("login_failure", tokenResponse.Error, ModelState));
+            }
+
+            return Ok(new { Token = tokenResponse.AccessToken });
         }
     }
 }
