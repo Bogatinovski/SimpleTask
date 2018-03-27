@@ -102,6 +102,14 @@ namespace SimpleTask
                     Version = "v1"
                 });
 
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    In = "header",
+                    Type = "apiKey"
+                });
+
                 var basePath = AppContext.BaseDirectory;
                 var xmlPath = Path.Combine(basePath, "SimpleTask.xml");
                 c.IncludeXmlComments(xmlPath);
