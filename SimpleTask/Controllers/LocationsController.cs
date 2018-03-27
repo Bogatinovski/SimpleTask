@@ -12,6 +12,7 @@ namespace SimpleTask.Controllers
 {
     [Produces("application/json")]
     [Route("api/Locations")]
+    [Authorize]
     public class LocationsController : Controller
     {
         private readonly CampusDbContext _context;
@@ -27,7 +28,6 @@ namespace SimpleTask.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> GetLocations()
         {
             IEnumerable<Locations> locations = await _context.Locations.Include(l => l.Classrooms).ToListAsync();
