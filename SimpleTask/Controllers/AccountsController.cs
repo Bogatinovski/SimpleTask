@@ -34,7 +34,7 @@ namespace SimpleTask.Controllers
         // POST api/Accounts/Register
         [HttpPost]
         [Route("Register")]
-        public async Task<IActionResult> Register([FromBody]RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -60,7 +60,7 @@ namespace SimpleTask.Controllers
         // POST api/Accounts/Login
         [HttpPost]
         [Route("Login")]
-        public async Task<IActionResult> Login([FromBody]LoginViewModel credentials)
+        public async Task<IActionResult> Login(LoginViewModel credentials)
         {
             var disco = await DiscoveryClient.GetAsync(identityServerSettings.AuthorityEndpoint);
 
@@ -74,7 +74,7 @@ namespace SimpleTask.Controllers
 
             if (tokenResponse.IsError)
             {
-                return BadRequest(Errors.AddErrorToModelState("login_failure", tokenResponse.Error, ModelState));
+                return BadRequest(Errors.AddErrorToModelState("login_failure", "Invalid username of password", ModelState));
             }
 
             return Ok(new { Token = tokenResponse.AccessToken });

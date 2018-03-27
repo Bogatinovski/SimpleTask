@@ -54,6 +54,7 @@ namespace SimpleTask
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.User.RequireUniqueEmail = true;
+                options.Lockout.AllowedForNewUsers = false;
             });
 
             services.AddMvc()
@@ -118,12 +119,12 @@ namespace SimpleTask
                 options.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-                .AddIdentityServerAuthentication(options =>
-                {
-                    options.Authority = identityServerSettings.Get<IdentityServerSettings>().AuthorityEndpoint;
-                    options.RequireHttpsMetadata = false;
-                    options.ApiName = "api1";
-                });
+            .AddIdentityServerAuthentication(options =>
+            {
+                options.Authority = identityServerSettings.Get<IdentityServerSettings>().AuthorityEndpoint;
+                options.RequireHttpsMetadata = false;
+                options.ApiName = "api1";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

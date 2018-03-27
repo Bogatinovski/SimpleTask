@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4">
+                <h3>Login Form</h3>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="email">Email address:</label>
+                        <input type="email" class="form-control" id="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="pwd">Password:</label>
+                        <input type="password" class="form-control" id="pwd">
+                    </div>
+                    <button type="submit" class="btn btn-default">Login</button>
+                    <h5 id="access_token"></h5>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <h3>Signup Form</h3>
+                <form id="signupForm">
+                    <div class="form-group">
+                        <label for="email">Email address:</label>
+                        <input type="email" class="form-control" id="signup_email">
+                    </div>
+                    <div class="form-group">
+                        <label for="pwd">Password:</label>
+                        <input type="password" class="form-control" id="signup_pwd">
+                    </div>
+                    <div class="form-group">
+                        <label for="pwd">Repeat Password:</label>
+                        <input type="password" class="form-control" id="signup_pwdrepeat">
+                    </div>
+                    <button type="submit" class="btn btn-default">Signup</button>
+                    <h5 id="signup_info"></h5>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+            integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#loginForm").submit(function (e) {
+                e.preventDefault();
+                var email = $("#email").val();
+                var password = $("#pwd").val();
+                var jqXHR = $.post("/api/accounts/login", { Email: email, Password: password }, function (data) {
+                    $("#access_token").html(data.Token);
+                }, 'json');
+
+                jqXHR.fail(function (response) {
+                    $("#access_token").html(response.responseJSON.login_failure);
+                });
+                return false;
+            });
+
+            $("#signupForm").submit(function (e) {
+                e.preventDefault();
+                var email = $("#signup_email").val();
+                var password = $("#signup_pwd").val();
+                var repeat = $("#signup_pwdrepeat").val();
+                var jqXHR = $.post("/api/accounts/register", { Email: email, Password: password, ConfirmPassword: repeat }, function (data) {
+                    $("#signup_info").html("User created with Id: " + data.Id);
+                }, 'json');
+
+                jqXHR.fail(function (response) {
+                    $("#signup_info").html(response.responseText);
+                });
+               
+                return false;
+            });
+        });
+    </script>
+</body>
+</html>
