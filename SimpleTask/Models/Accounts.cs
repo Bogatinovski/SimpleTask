@@ -1,37 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SimpleTask.Models
 {
-    /// <summary>
-    /// The Account entity represents holds data for the virtual Account on the platform
-    /// </summary>
-    public class Account
+    public partial class Accounts
     {
-        public Account()
+        public Accounts()
         {
-            Locations = new HashSet<Location>();
+            Locations = new HashSet<Locations>();
         }
 
-        [Key]
+        [Column("ID")]
         public int Id { get; set; }
-
-        [Required]
         public Guid Guid { get; set; }
-
         [Required]
         [StringLength(10)]
         public string SubDomain { get; set; }
-
         [Required]
         [StringLength(100)]
         public string Name { get; set; }
-
         [Required]
-        [MinLength(1), MaxLength(1)]
+        [Column(TypeName = "char(1)")]
         public string Status { get; set; }
 
-        public ICollection<Location> Locations { get; set; }
+        [InverseProperty("Account")]
+        public ICollection<Locations> Locations { get; set; }
     }
 }

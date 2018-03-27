@@ -13,9 +13,9 @@ namespace SimpleTask.Controllers
     [Route("api/Locations")]
     public class LocationsController : Controller
     {
-        private readonly C3Context _context;
+        private readonly CampusDbContext _context;
 
-        public LocationsController(C3Context context)
+        public LocationsController(CampusDbContext context)
         {
             _context = context;
         }
@@ -28,7 +28,7 @@ namespace SimpleTask.Controllers
         [HttpGet]
         public async Task<IActionResult> GetLocations()
         {
-            IEnumerable<Location> locations = await _context.Locations.Include(l => l.Classrooms).ToListAsync();
+            IEnumerable<Locations> locations = await _context.Locations.Include(l => l.Classrooms).ToListAsync();
             return Ok(locations);
         }
 
@@ -70,7 +70,7 @@ namespace SimpleTask.Controllers
                 return BadRequest(ModelState);
             }
 
-            IEnumerable<Classroom> classrooms = await _context.Classrooms.Where(c => c.LocationId == id).ToListAsync();
+            IEnumerable<Classrooms> classrooms = await _context.Classrooms.Where(c => c.LocationId == id).ToListAsync();
 
             return Ok(classrooms);
         }
@@ -83,7 +83,7 @@ namespace SimpleTask.Controllers
         /// <param name="classroom">The Classroom entity</param>
         /// <returns></returns>
         [HttpPost("{id}/Classrooms")]
-        public async Task<IActionResult> PostLocationClassroom([FromRoute] int id, [FromBody] Classroom classroom)
+        public async Task<IActionResult> PostLocationClassroom([FromRoute] int id, [FromBody] Classrooms classroom)
         {
             if (!ModelState.IsValid)
             {
@@ -104,7 +104,7 @@ namespace SimpleTask.Controllers
         /// <param name="location">The Location entity</param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutLocation([FromRoute] int id, [FromBody] Location location)
+        public async Task<IActionResult> PutLocation([FromRoute] int id, [FromBody] Locations location)
         {
             if (!ModelState.IsValid)
             {
@@ -144,7 +144,7 @@ namespace SimpleTask.Controllers
         /// <param name="location">The Location entity</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> PostLocation([FromBody] Location location)
+        public async Task<IActionResult> PostLocation([FromBody] Locations location)
         {
             if (!ModelState.IsValid)
             {

@@ -5,25 +5,19 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SimpleTask.Models
 {
-    /// <summary>
-    /// The Classroom entity holds the data for each individual classroom
-    /// </summary>
-    public class Classroom
+    public partial class Classrooms
     {
-        [Key]
+        [Column("ID")]
         public int Id { get; set; }
-
-        [Required]
-        [ForeignKey("Location")]
+        [Column("LocationID")]
         public int LocationId { get; set; }
-
         [Required]
         [StringLength(50)]
         public string Name { get; set; }
-
-        [Required]
         public int Capacity { get; set; }
 
-        public Location Location { get; set; }
+        [ForeignKey("LocationId")]
+        [InverseProperty("Classrooms")]
+        public Locations Location { get; set; }
     }
 }
